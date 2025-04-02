@@ -93,146 +93,73 @@ for i in data:
     print(i)
 connection.commit()
 
-def searches():
-    g = input("Do you want to search the database? (yes or no): ")
+
+def add_customer():
+    fname = input("First name: ")
+    lname = input("Last name: ")
+    phone = input("Phone number: ")
+    email = input("Email: ")
+
     
-    if g.lower() == "yes":
-        
-        table = input("Do you want to search customers, pets, or visits? Type: 'customers', 'pets', or 'visits': ")
-        
-        if table == "customers":
-            field = input("Search by: fname, lname, email, phoneNum, address, city, or postal code?: ")
-            value = input(f"Enter the {field}: ")
-            if field == "fname":
-                cursor.execute(f"select * from customers where fname = '{value}'")
-            elif field == "lname": 
-                cursor.execute(f"select * from customers where lname = '{value}'")
-            elif field == "email": 
-                cursor.execute(f"select * from customers where email = '{value}'")
-            elif field == "phoneNum": 
-                cursor.execute(f"select * from customers where phoneNum = '{value}'")
-            elif field == "address": 
-                cursor.execute(f"select * from customers where address = '{value}'")
-            elif field == "city": 
-                cursor.execute(f"select * from customers where city = '{value}'")
-            elif field == "postal code": 
-                cursor.execute(f"select * from customers where postal code = '{value}'")
-            else:
-                print("Invalid field for customers.")
-                return
+    cursor.execute(f"insert into customers (fname, lname, phoneNum, email) VALUES ('{fname}', '{lname}', '{phone}', '{email}')")
+    connection.commit()
+    print("Customer added")
 
-        elif table == "pets":
-            field = input("Search by: pname, breed, ownerID, birthdate, or type: ")
-            value = input(f"Enter the {field}: ")
-            if field == "pname":
-                cursor.execute(f"select * from pets where pname = '{value}'")
-            elif field == "breed": 
-                cursor.execute(f"select * from pets where breed = '{value}'")
-            elif field == "ownerID": 
-                cursor.execute(f"select * from pets where ownerID = '{value}'")
-            elif field == "birthdate": 
-                cursor.execute(f"select * from pets where birthdate = '{value}'")
-            elif field == "type": 
-                cursor.execute(f"select * from pets where type = '{value}'")
-            else:
-                print("Invalid field for pets.")
-                return
 
-        elif table == "visits":
-            field = input("Search by: details, cost, amount paid, ownerID, or petID: ")
-            value = input(f"Enter the {field}: ")
-            if field == "details":
-                cursor.execute(f"select * from visits where details like '%{value}%'")
-            elif field == "cost": 
-                cursor.execute(f"select * from visits where cost = {value}")
-            elif field == "paid": 
-                cursor.execute(f"select * from visits where paid = {value}")
-            elif field == "ownerID": 
-                cursor.execute(f"select * from visits where ownerID = {value}")
-            elif field == "petID": 
-                cursor.execute(f"select * from visits where petID = {value}")
-            else:
-                print("Invalid field for visits.")
-                return
+def search_customer():
+    field = input("Search by (fname, lname, phoneNum, email): ")
+    value = input(f"Enter the {field}: ")
 
-        else:
-            print("choose customers, pets, or visits. It's not that hard")
-            return
-        
-        results = cursor.fetchall()
-        if results:
-            for row in results:
-                print(row)
-        else:
-            print("No results found.")
     
-    elif g.lower() == "no":
-        connection.close()
-        exit()
-    
-    else:
-        print("type only yes or no")
-    return
-
-searches()
-
-
-def update(id, field, new_value):
-    g = input("Do you want to edit a value? (yes or no): ")
-    if g.lower == "yes":
-        
-        query = f"update customers set {field} = ? where id = ?"
-        cursor.execute(query, (new_value, id))
-        connection.commit()
-        print(f"{field} for id {id} has been updated to {new_value}.")
-    else:
-        return
-
-
-def searchupdate():
-    
-    field = input("Search by: fname, lname, email, phoneNum, address, city, or postal code: ")
-    value = input(f"Enter the {field}: ") 
-    query = f"select * from customers where {field} = ?"
-    cursor.execute(query, (value,))
+    cursor.execute(f"select * from customers where {field} = '{value}'")
     results = cursor.fetchall()
+
     if results:
-        print("Search results:")
         for row in results:
             print(row)
-        goon = int(input("Enter the ID of the entry you want to update: "))
-        return goon
     else:
-        print("No results found.")
-        return None
+        print("No customer found.")
+
+def edit_customer():
+    search_customer()  
+
+    customer_id = input("Enter the ID of the customer to edit: ")
+    field = input("Which field to update (fname, lname, phoneNum, email): ")
+    new_value = input(f"Enter the new value for {field}: ")
+
+    
+    cursor.execute(f"update customers set {field} = '{new_value}' where id = {customer_id}")
+    connection.commit()
+    print("Customer updated")
 
 
-def edit(id):
-    cursor.execute(f"select * from customers where id = ?", (id,))
-    entry = cursor.fetchone()
+def menu():
+    while True:
+        print("\n1. Add Customer(type 1)")
+        print("2. Search Customer(type 2)")
+        print("3. Edit Customer(type 3)")
+        print("4. Exit(type 4)")
 
-    if entry:
-        print(f"\nCurrent data for ID {id}:")
-        print(f"ID: {entry[0]}, Name: {entry[1]} {entry[2]}, Phone: {entry[3]}, Email: {entry[4]}, Address: {entry[5]}, City: {entry[6]}, Postal: {entry[7]}")
+        choice = input("Choose an option: ")
 
-        data = {}
-        sandwich = "yes"
-        
-        while sandwich.lower() == "yes":
-            tralalero = input("Enter the field you want to edit (fname, lname, phoneNum, email, address, city, postalcode): ")
-            new_value = input(f"Enter the new value for {tralalero}: ")
-            data[tralalero] = new_value
+        if choice == "1":
+            add_customer()
+        elif choice == "2":
+            search_customer()
+        elif choice == "3":
+            edit_customer()
+        elif choice == "4":
+            connection.close()
+            break
+        else:
+            print("Invalid option, please try again.")
 
-            sandwich = input("Do you want to edit another field? (yes/no): ")
 
-        for field, new_value in data.items():
-            update(id, field, new_value)
+menu()
 
-    else:
-        print(f"No customer found with ID {id}.")
 
-tungtungtungsahur = searchupdate()
-if tungtungtungsahur:
-    edit(tungtungtungsahur)
 
-connection.close()
+# display menu
+# 1 enter 
+# 2 search
+# 3 update
