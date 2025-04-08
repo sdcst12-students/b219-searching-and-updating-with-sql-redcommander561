@@ -101,7 +101,7 @@ def add_customer():
     email = input("Email: ")
 
     
-    cursor.execute(f"insert into customers (fname, lname, phoneNum, email) VALUES ('{fname}', '{lname}', '{phone}', '{email}')")
+    cursor.execute(f"insert into customers (fname, lname, phoneNum, email) values ('{fname}', '{lname}', '{phone}', '{email}')")
     connection.commit()
     print("Customer added")
 
@@ -118,7 +118,7 @@ def search_customer():
         for row in results:
             print(row)
     else:
-        print("No customer found.")
+        print("Invalid probably you typed it in wrong or it doesn't exist.")
 
 def edit_customer():
     search_customer()  
@@ -152,7 +152,7 @@ def menu():
             connection.close()
             break
         else:
-            print("Invalid option, please try again.")
+            print("Invalid, try again.")
 
 
 menu()

@@ -93,8 +93,8 @@ Optional Enhancements.
 
 Part 2. (This part is new)
 Part A: Create a function that will accept 2 parameters: 
-* id: integer key value for the table entry to be changed
-* data: a dictionary of values to be updated
+* id: integer key value for the table entry to be changed.
+* data: a dictionary of values to be updated.
 
 
 Note that you will need to also have a function to allow you to find the id of the entry you want changed
@@ -136,3 +136,8 @@ I: update information
 > I
 Information being written to database
 ```
+
+```
+update(id,data)
+
+update(50,{"fname": "Fred", "lname" : "Mama", "phone":})
